@@ -56,8 +56,8 @@ libname = "smartaleck"
 
 # Choose build type.
 #
-#  build_type = "optimized"
-build_type = "debug"
+build_type = "optimized"
+#  build_type = "debug"
 
 # Short description for package list on PyPI
 #

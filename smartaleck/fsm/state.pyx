@@ -7,7 +7,6 @@ License: MIT
 """
 
 from smartaleck.core.agent import AbstractAgent
-from smartaleck.fsm.state cimport *
 
 cdef class State:
     def __init__(self, str state_name, owner_agent):

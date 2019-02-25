@@ -30,6 +30,13 @@ cdef class StateMachine:
         self.__entry_state__ = ""
         self.__current_state__ = ""
 
+
+    cpdef to_entry(self):
+        """Restart the state machine from the entry state.
+
+        """
+        self.current_state = self.entry_state
+
     cpdef State get_state(self, str state_name):
         if self.has_state(state_name):
             return self.__states__[state_name]

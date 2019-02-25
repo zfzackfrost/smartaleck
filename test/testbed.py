@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from typing import Optional
+import time
 
 import numpy as np
 from smartaleck.core.agent import AbstractAgent
@@ -11,7 +12,6 @@ from smartaleck.core.event import UpdateEvent
 from smartaleck.core.event import UpdateEvent
 from smartaleck.fsm.state import State
 from smartaleck.fsm import StateMachine
-
 
 class TestAgent(AbstractAgent):
     def __init__(self, world: World):
@@ -44,9 +44,10 @@ class TestState(State):
 
     def on_update(self, evt):
         super().on_update(evt)
-        print("\tDelta: {}".format(evt.delta_seconds))
+        #  print("\tIn State: {}".format(self.state_name))
         #  print(self.owner_agent.velocity)
-
+        for i in range(10):
+            np.sqrt(i)
         loop_count = (
             evt.user_data["loop_count"]
             if "loop_count" in evt.user_data
@@ -57,10 +58,12 @@ class TestState(State):
         return None
 
     def on_enter(self) -> None:
-        print("\tEnter State: {}".format(self.state_name))
+        #  print("\tEnter State: {}".format(self.state_nae))
+        return None
 
     def on_exit(self) -> None:
-        print("\tExit State: {}".format(self.state_name))
+        #  print("\tExit State: {}".format(self.state_name))
+        return None
 
 
 class TestFSM(StateMachine):
@@ -79,13 +82,20 @@ def main():
 
     agent.position = [1, 10]
     agent.velocity = [100, 100]
+    total_time = 0.0
+    for _ in range(100):
+        start = time.perf_counter()
+        fsm.to_entry()
+        for i in range(20):
+            evt = UpdateEvent(delta_seconds=1 / 60.0, user_data={"loop_count": i})
 
-    for i in range(20):
-        evt = UpdateEvent(delta_seconds=1 / 60.0, user_data={"loop_count": i})
+            fsm.on_update(evt)
+        end = time.perf_counter()
+        delta = end - start
+        total_time += delta
 
-        print("{}:".format(i ))
-        fsm.on_update(evt)
 
+    print (total_time / 100.0)
 
 if __name__ == "__main__":
     main()
