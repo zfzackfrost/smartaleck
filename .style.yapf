@@ -1,0 +1,12 @@
+[yapf]
+based_on_style = pep8
+dedent_closing_brackets = True
+spaces_before_comment = 1
+split_before_closing_bracket = True
+split_complex_comprehension = True
+split_before_dot = True
+arithmetic_precedence_indication = True
+column_limit = 80
+
+
+# vim: set ft=dosini:
