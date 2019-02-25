@@ -8,7 +8,7 @@ License: MIT
 
 from typing import Dict, Optional, Type, T
 
-from smartaleck.core.agent import AbstractAgent
+from smartaleck.core.agent cimport Agent
 
 from smartaleck.fsm.state cimport State
 from smartaleck.core import UpdateEvent
@@ -24,8 +24,8 @@ cdef class StateMachine:
     cdef dict __states__
     cdef str __entry_state__
     cdef str __current_state__
-    def __init__(self, owner_agent: AbstractAgent):
-        self.__owner_agent__: AbstractAgent = owner_agent
+    def __init__(self, Agent owner_agent):
+        self.__owner_agent__ = owner_agent
         self.__states__ = {}
         self.__entry_state__ = ""
         self.__current_state__ = ""
@@ -46,7 +46,7 @@ cdef class StateMachine:
         return self.get_state(state_name)
 
     @property
-    def owner_agent(self) -> AbstractAgent:
+    def owner_agent(self):
         return self.__owner_agent__
 
     cpdef State add_state(

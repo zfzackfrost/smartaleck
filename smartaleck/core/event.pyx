@@ -1,21 +1,19 @@
 # cython: language_level=3, boundscheck=False
-"""Defines the SmartAleck `Event` class & related types/methods
+"""Defines the SmartAleck event classes and related types
 
 Author: Zachary Frost
 Created: 2019-02-24
 License: MIT
 """
 
-from typing import Any, Dict, Optional
 
-
-cpdef enum EventTrigger:
+cpdef enum EEventTrigger:
     NULL_TRIGGER = 0
     CUSTOM = 1
     UPDATE = 2
 
 
-cpdef enum EventTarget:
+cpdef enum EEventTarget:
     NULL_TARGET = 0
     GENERIC = 1
     AGENT = 2
@@ -25,18 +23,18 @@ cpdef enum EventTarget:
 
 
 cdef class EventBase:
-    cdef readonly EventTrigger trigger
-    cdef readonly EventTarget target
+    cdef readonly EEventTrigger trigger
+    cdef readonly EEventTarget target
     cdef readonly dict user_data
     def __init__(
         self,
-        EventTrigger trigger = EventTrigger.NULL_TRIGGER,
-        EventTarget target = EventTarget.NULL_TARGET,
-        dict user_data = None,
+        EEventTrigger trigger = EEventTrigger.NULL_TRIGGER,
+        EEventTarget target = EEventTarget.NULL_TARGET,
+        object user_data = None,
     ):
         self.target = target
         self.trigger = trigger
-        self.user_data = user_data
+        self.user_data = dict(user_data)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Event Subclasses ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
@@ -48,10 +46,10 @@ cdef class UpdateEvent(EventBase):
     def __init__(
         self,
         float delta_seconds = -1.0,
-        EventTarget target = EventTarget.NULL_TARGET,
+        EEventTarget target = EEventTarget.NULL_TARGET,
         dict user_data = None,
     ):
         super().__init__(
-            trigger=EventTrigger.UPDATE, target=target, user_data=user_data
+            trigger=EEventTrigger.UPDATE, target=target, user_data=user_data
         )
         self.delta_seconds = delta_seconds if delta_seconds >= 0.0 else 0.0

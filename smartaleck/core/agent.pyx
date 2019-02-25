@@ -5,20 +5,13 @@ Author: Zachary Frost
 Created: 2019-02-23
 License: MIT
 """
-from abc import ABC, abstractmethod
 
-import numpy as np
 
-cimport smartaleck.core.world_props as world_props
+from smartaleck.core.world_props cimport WorldProps
 
-cdef class AbstractAgentBase:
-    def __init__(self, world_props.WorldProps world):
-        super().__init__()
-        self.__world__ = world
-
-    @property
-    def world(self):
-        return self.__world__
+cdef class Agent:
+    def __init__(self, WorldProps world):
+        self.world = world
 
     @property
     def position(self):
@@ -36,5 +29,3 @@ cdef class AbstractAgentBase:
     def velocity(self, new_vel):
         pass
 
-class AbstractAgent(AbstractAgentBase):
-    pass

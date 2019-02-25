@@ -6,16 +6,12 @@ Created: 2019-02-24
 License: MIT
 """
 
-from smartaleck.core.agent import AbstractAgent
+from smartaleck.core.agent cimport Agent
 
 cdef class State:
-    def __init__(self, str state_name, owner_agent):
-        self.__owner_agent__ = owner_agent
+    def __init__(self, str state_name, Agent owner_agent not None):
+        self.owner_agent = owner_agent
         self.state_name = state_name
-
-    @property
-    def owner_agent(self):
-        return self.__owner_agent__
 
     cpdef on_update(self, evt):
         pass

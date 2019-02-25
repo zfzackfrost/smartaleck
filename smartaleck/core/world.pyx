@@ -5,11 +5,7 @@ Created: 2019-02-23
 License: MIT
 """
 
-from typing import Any, List, Type
-
-import numpy as np
-
-from smartaleck.core.agent import AbstractAgent
+from smartaleck.core.agent cimport Agent
 from smartaleck.core.world_props cimport WorldProps
 
 
