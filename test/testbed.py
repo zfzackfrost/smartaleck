@@ -10,9 +10,7 @@ from smartaleck.core.agent import Agent
 from smartaleck.core.event import EEventTarget, UpdateEvent
 from smartaleck.core.world import World
 from smartaleck.core.world_props import WorldProps
-from smartaleck.fsm import StateMachine
-from smartaleck.fsm.state import State
-
+from smartaleck.fsm import StateMachine, State
 
 class TestAgent(Agent):
     def __init__(self, world: World):

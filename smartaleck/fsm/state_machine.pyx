@@ -24,7 +24,8 @@ cdef class StateMachine:
     cdef dict __states__
     cdef str __entry_state__
     cdef str __current_state__
-    def __init__(self, Agent owner_agent):
+    cdef Agent __owner_agent__
+    def __cinit__(self, Agent owner_agent):
         self.__owner_agent__ = owner_agent
         self.__states__ = {}
         self.__entry_state__ = ""
@@ -52,6 +53,7 @@ cdef class StateMachine:
     cpdef State add_state(
         self, state_type, str state_name
     ):
+        cdef State state
         if state_name not in self.__states__:
             state = state_type(state_name, self.owner_agent)
             self.__states__[state_name] = state
@@ -76,14 +78,15 @@ cdef class StateMachine:
         if self.has_state(new_entry):
             self.__entry_state__ = new_entry
 
-    cpdef bint has_state(self, state_name):
+    cpdef bint has_state(self, str state_name):
         return state_name in self.__states__
 
     @property
-    def is_started(self) -> bool:
-        return bool(self.current_state)
+    def is_started(self):
+        return True if self.__current_state__ else False
 
-    cdef __current_state_obj__(self):
+    cdef __CurrentStateOBJ__ __current_state_obj__(self):
+        cdef bint is_entry
         is_entry = False
         if not self.is_started:
             is_entry = True
@@ -101,6 +104,10 @@ cdef class StateMachine:
         return __CurrentStateOBJ__(self.__states__[self.current_state], is_entry)
 
     cpdef on_update(self, evt):
+        cdef State state_obj, next_state_obj
+        cdef str next_state_name
+        cdef bint is_entry
+        cdef __CurrentStateOBJ__ state_obj_result
         state_obj_result = self.__current_state_obj__()
         state_obj = state_obj_result.state
         is_entry = state_obj_result.is_entry

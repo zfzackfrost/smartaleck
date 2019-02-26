@@ -56,8 +56,8 @@ libname = "smartaleck"
 
 # Choose build type.
 #
-build_type = "optimized"
-#  build_type = "debug"
+#  build_type = "optimized"
+build_type = "debug"
 
 # Short description for package list on PyPI
 #
@@ -116,6 +116,10 @@ if sys.version_info < (2, 7):
 
 try:
     from Cython.Build import cythonize
+    import Cython.Compiler.Options
+
+    Cython.Compiler.Options.annotate = build_type == "debug"
+
 except ImportError:
     sys.exit(
         "Cython not found. Cython is needed to build the extension modules."
@@ -355,7 +359,10 @@ cython_ext_modules = [
 # cythonize() just performs the Cython-level processing, and returns a list of Extension objects.
 #
 my_ext_modules = cythonize(
-    cython_ext_modules, include_path=my_include_dirs, gdb_debug=my_debug
+    cython_ext_modules,
+    include_path=my_include_dirs,
+    gdb_debug=my_debug,
+    annotate=my_debug,
 )
 
 
