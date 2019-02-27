@@ -9,3 +9,4 @@ License: MIT
 from smartaleck.core.world_props cimport WorldProps
 cdef class Agent:
     cdef readonly WorldProps world
+

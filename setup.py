@@ -155,8 +155,8 @@ extra_link_args_math_debug = []
 
 # Modules that do not involve numerical computations
 #
-extra_compile_args_nonmath_optimized = ["-O2"]
-extra_compile_args_nonmath_debug = ["-O0", "-g"]
+extra_compile_args_nonmath_optimized = []
+extra_compile_args_nonmath_debug = []
 extra_link_args_nonmath_optimized = []
 extra_link_args_nonmath_debug = []
 
@@ -255,6 +255,7 @@ Return value:
         extra_link_args=link_args,
         include_dirs=include_dirs,
         libraries=libraries,
+        language="c++"
     )
 
 
@@ -363,6 +364,7 @@ my_ext_modules = cythonize(
     include_path=my_include_dirs,
     gdb_debug=my_debug,
     annotate=my_debug,
+    language="c++",
 )
 
 

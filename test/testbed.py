@@ -43,13 +43,11 @@ class TestState(State):
 
     def on_update(self, evt):
         super().on_update(evt)
-        print(
-            "    In State: {sname} \u2014 Event<target={etarget}>".format(
-                sname=self.state_name, etarget=str(EEventTarget(evt.target).name)
-            )
-        )
-        for i in range(10):
-            np.sqrt(i)
+       #   print(
+            #  "    In State: {sname} \u2014 Event<target={etarget}>".format(
+                #  sname=self.state_name, etarget=str(EEventTarget(evt.target).name)
+            #  )
+        #  )
         loop_count = (
             evt.user_data["loop_count"]
             if "loop_count" in evt.user_data
@@ -60,11 +58,15 @@ class TestState(State):
         return None
 
     def on_enter(self) -> None:
-        print("    Enter State: {}".format(self.state_name))
+#          for i in range(10):
+            #  np.sqrt(i)
+        #  print("    Enter State: {}".format(self.state_name))
         return None
 
     def on_exit(self) -> None:
-        print("    Exit State: {}".format(self.state_name))
+#          for i in range(10):
+            #  np.sqrt(i)
+        #  print("    Exit State: {}".format(self.state_name))
         return None
 
 
@@ -78,29 +80,30 @@ class TestFSM(StateMachine):
 
 def main():
     world = World(TestAgent)
-    agent = TestAgent(world)
+    agent = world.add_agent(TestAgent)
 
     fsm = TestFSM(agent)
 
     agent.position = [1, 10]
     agent.velocity = [100, 100]
+
     total_time = 0.0
-    for _ in range(1):
+    for j in range(100):
         start = time.perf_counter()
         fsm.to_entry()
-        for i in range(20):
+        for i in range(300):
             evt = UpdateEvent(
                 delta_seconds=1 / 60.0,
                 target=EEventTarget.GENERIC,
                 user_data={"loop_count": i},
             )
-            print("{}:".format(i))
             fsm.on_update(evt)
         end = time.perf_counter()
         delta = end - start
         total_time += delta
+        print("{}: {}".format(j, delta))
 
-    print(total_time / 1.0)
+    print(total_time / 100.0)
 
 
 if __name__ == "__main__":

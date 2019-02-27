@@ -1,0 +1,4 @@
+[flake8]
+filename = *.pyx,*.px*
+exclude = .eggs,*.egg,build
+ignore = E741,W503,W504,E241,E226, E225

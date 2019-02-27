@@ -6,44 +6,39 @@ Created: 2019-02-24
 License: MIT
 """
 
-from typing import Dict, Optional, Type, T
-
 from smartaleck.core.agent cimport Agent
 
 from smartaleck.fsm.state cimport State
-from smartaleck.core import UpdateEvent
+from smartaleck.core.event cimport UpdateEvent
 
-cdef class __CurrentStateOBJ__:
-    cdef readonly State state
-    cdef readonly bint is_entry
-    def __cinit__(self, State state, bint is_entry):
-        self.state = state
-        self.is_entry = is_entry
 
 cdef class StateMachine:
     cdef dict __states__
     cdef str __entry_state__
     cdef str __current_state__
+    cdef bint __is_entry__
     cdef Agent __owner_agent__
-    def __cinit__(self, Agent owner_agent):
+
+    def __init__(self, Agent owner_agent):
         self.__owner_agent__ = owner_agent
         self.__states__ = {}
         self.__entry_state__ = ""
         self.__current_state__ = ""
-
+        self.__is_entry__ = False
 
     cpdef to_entry(self):
         """Restart the state machine from the entry state.
 
         """
         self.current_state = self.entry_state
+        self.__is_entry__ = True
 
-    cpdef State get_state(self, str state_name):
+    cdef State get_state(self, str state_name):
         if self.has_state(state_name):
             return self.__states__[state_name]
         return None
 
-    def __getitem__(self, state_name: str):
+    def __getitem__(self, str state_name not None):
         return self.get_state(state_name)
 
     @property
@@ -83,35 +78,37 @@ cdef class StateMachine:
 
     @property
     def is_started(self):
-        return True if self.__current_state__ else False
+        return bool(self.__current_state__)
 
-    cdef __CurrentStateOBJ__ __current_state_obj__(self):
-        cdef bint is_entry
-        is_entry = False
+    cdef State __current_state_obj__(self):
         if not self.is_started:
-            is_entry = True
-            if not self.has_state(self.entry_state):
+            self.__is_entry__ = True
+            if not self.has_state(self.__entry_state__):
                 raise RuntimeError(
                     "Could not find a state object for entry state name!"
                 )
             else:
-                self.current_state = self.entry_state
-        if not self.has_state(self.current_state):
+                self.current_state = self.__entry_state__
+        if not self.has_state(self.__current_state__):
             raise RuntimeError(
                 "Could not find a state object for current state name!"
             )
+        return self.__states__[self.current_state]
 
-        return __CurrentStateOBJ__(self.__states__[self.current_state], is_entry)
-
-    cpdef on_update(self, evt):
-        cdef State state_obj, next_state_obj
+    cpdef on_update(self, UpdateEvent evt):
+        if evt is None:
+            return
+        cdef  next_state_obj
         cdef str next_state_name
-        cdef bint is_entry
-        cdef __CurrentStateOBJ__ state_obj_result
-        state_obj_result = self.__current_state_obj__()
-        state_obj = state_obj_result.state
-        is_entry = state_obj_result.is_entry
-        if is_entry:
+        cdef State state_obj = self.__current_state_obj__()
+
+        if state_obj is None:
+            raise TypeError(
+                "SmartAleck Error! Something is very wrong! Current state object is `None`! An error should have been thrown sooner..."
+            )
+
+        if self.__is_entry__:
+            self.__is_entry__ = False
             state_obj.on_enter()
         next_state_name = state_obj.on_update(evt)
         if next_state_name is not None and self.has_state(next_state_name):

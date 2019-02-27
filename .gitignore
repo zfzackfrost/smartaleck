@@ -123,5 +123,6 @@ cython_debug/
 
 # Cython Files
 smartaleck/**/*.c
+smartaleck/**/*.cpp
 smartaleck/**/*.html
 

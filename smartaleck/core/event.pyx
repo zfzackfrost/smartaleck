@@ -1,4 +1,4 @@
-# cython: language_level=3, boundscheck=False
+# cython: language_level=3, boundscheck=False, language=c++
 """Defines the SmartAleck event classes and related types
 
 Author: Zachary Frost
@@ -6,33 +6,19 @@ Created: 2019-02-24
 License: MIT
 """
 
-
-cpdef enum EEventTrigger:
-    CUSTOM = 1
-    UPDATE = 2
-
-
-cpdef enum EEventTarget:
-    GENERIC = 1
-    AGENT = 2
-    PATHFINDER = 3
-    STATE_MACHINE = 4
-    WORLD = 5
-
+from smartaleck.core.event cimport EEventTrigger, EEventTarget
 
 cdef class EventBase:
-    cdef readonly EEventTrigger trigger
-    cdef readonly EEventTarget target
-    cdef readonly dict user_data
-    def __init__(
+    def __cinit__(
         self,
-        EEventTrigger trigger = EEventTrigger.CUSTOM,
-        EEventTarget target = EEventTarget.GENERIC,
-        object user_data = None,
+        EEventTrigger trigger=EEventTrigger.CUSTOM,
+        EEventTarget target=EEventTarget.GENERIC,
+        dict user_data=None,
+        **kwargs,
     ):
         self.target = target
         self.trigger = trigger
-        self.user_data = dict(user_data)
+        self.user_data = user_data
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Event Subclasses ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
@@ -40,14 +26,14 @@ cdef class EventBase:
 
 
 cdef class UpdateEvent(EventBase):
-    cdef readonly float delta_seconds
-    def __init__(
+    def __cinit__(
         self,
-        float delta_seconds = -1.0,
-        EEventTarget target = EEventTarget.GENERIC,
-        dict user_data = None,
+        float delta_seconds=-1.0,
+        EEventTarget target=EEventTarget.GENERIC,
+        dict user_data=None,
+        **kwargs,
     ):
-        super().__init__(
-            trigger=EEventTrigger.UPDATE, target=target, user_data=user_data
-        )
+        self.target = target
+        self.trigger = EEventTrigger.UPDATE
+        self.user_data = user_data
         self.delta_seconds = delta_seconds if delta_seconds >= 0.0 else 0.0

@@ -10,7 +10,7 @@ License: MIT
 from smartaleck.core.world_props cimport WorldProps
 
 cdef class Agent:
-    def __init__(self, WorldProps world):
+    def __init__(self, WorldProps world not None):
         self.world = world
 
     @property
